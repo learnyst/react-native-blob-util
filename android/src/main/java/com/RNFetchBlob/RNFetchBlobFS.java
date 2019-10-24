@@ -298,6 +298,47 @@ class RNFetchBlobFS {
         }
     }
 
+    static public void getAllSDCardApplicationDirs(ReactApplicationContext ctx, Promise promise) {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            try {
+                File[] externalDirectories = ctx.getExternalFilesDirs(null);
+                
+                if (externalDirectories != null) {
+                    StringBuilder externalDirectorysStr = new StringBuilder();
+                    boolean isFirstEntry = true;
+                    externalDirectorysStr.append("[");
+
+                    for (int i = 0; i < externalDirectories.length; i++) {
+                        if (externalDirectories[i] != null) {
+                            if (!isFirstEntry) {
+                                externalDirectorysStr.append(",");
+                            }
+
+                            externalDirectorysStr.append("{\"path\": \"");
+                            externalDirectorysStr.append(externalDirectories[i].getParentFile().getAbsolutePath());
+                            externalDirectorysStr.append("\", \"freemem\": ");
+
+                            StatFs stat = new StatFs(externalDirectories[i].getParentFile().getAbsolutePath()); 
+                            externalDirectorysStr.append(stat.getFreeBytes() + "}");                      
+                            isFirstEntry = false;
+                        }
+                    }
+
+                    externalDirectorysStr.append("]");
+                    System.out.println("STORAGE Details " + externalDirectorysStr.toString());
+                    promise.resolve(externalDirectorysStr.toString());
+                } else {
+                    promise.reject("RNFetchBlob.getAllSDCardApplicationDirs", "No externalDirectories found");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                promise.reject("RNFetchBlob.getAllSDCardApplicationDirs", e.getLocalizedMessage());
+            }
+        } else {
+            promise.reject("RNFetchBlob.getAllSDCardApplicationDirs", "External storage not mounted");
+        }
+    }
+    
     /**
      * Static method that returns a temp file path
      * @param taskId    An unique string for identify
