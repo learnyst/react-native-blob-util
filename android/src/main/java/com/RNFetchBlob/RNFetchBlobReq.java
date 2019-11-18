@@ -541,15 +541,23 @@ public class RNFetchBlobReq extends BroadcastReceiver implements Runnable {
 //                    ignored.printStackTrace();
                 }
 
-                RNFetchBlobFileResp rnFetchBlobFileResp = (RNFetchBlobFileResp) responseBody;
+                // Sridhar. Typecast is throwing exception
+                // https://github.com/joltup/rn-fetch-blob/issues/490
+                try {
+                    RNFetchBlobFileResp rnFetchBlobFileResp = (RNFetchBlobFileResp) responseBody;
 
-                if(rnFetchBlobFileResp != null && rnFetchBlobFileResp.isDownloadComplete() == false){
-                    callback.invoke("RNFetchBlob failed. Download interrupted.", null);
+                    if(rnFetchBlobFileResp != null && rnFetchBlobFileResp.isDownloadComplete() == false){
+                        callback.invoke("RNFetchBlob failed. Download interrupted.", null);
+                    }
+                    else {
+                        this.destPath = this.destPath.replace("?append=true", "");
+                        callback.invoke(null, RNFetchBlobConst.RNFB_RESPONSE_PATH, this.destPath);
+                    }                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    callback.invoke("RNFetchBlob failed. Download interrupted - 1.", null);
                 }
-                else {
-                    this.destPath = this.destPath.replace("?append=true", "");
-                    callback.invoke(null, RNFetchBlobConst.RNFB_RESPONSE_PATH, this.destPath);
-                }
+
                 break;
             default:
                 try {
