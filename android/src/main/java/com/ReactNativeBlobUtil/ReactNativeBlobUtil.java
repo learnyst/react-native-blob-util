@@ -426,4 +426,9 @@ public class ReactNativeBlobUtil extends ReactContextBaseJavaModule {
     public void getSDCardApplicationDir(Promise promise) {
         ReactNativeBlobUtilFS.getSDCardApplicationDir(this.getReactApplicationContext(), promise);
     }
+
+    @ReactMethod
+    public void getAllSDCardApplicationDirs(Promise promise) {
+        RNFetchBlobFS.getAllSDCardApplicationDirs(this.getReactApplicationContext(), promise);
+    }    
 }

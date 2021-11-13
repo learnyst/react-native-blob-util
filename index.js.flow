@@ -5,6 +5,7 @@ declare class AndroidApi {
   addCompleteDownload(options: AndroidDownloadOption): Promise<void>;
   getContentIntent(mime: string): Promise<string>;
   getSDCardApplicationDir(): Promise<string>;
+  getAllSDCardApplicationDirs(): Promise<string>;
   getSDCardDir(): Promise<string>;
 }
 
