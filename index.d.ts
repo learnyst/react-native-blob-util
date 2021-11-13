@@ -529,6 +529,9 @@ export interface AndroidApi {
     getSDCardDir(): Promise<string>;
 
     getSDCardApplicationDir(): Promise<string>;
+
+    getAllSDCardApplicationDirs(): Promise<string>;
+
 }
 
 type Methods = "POST" | "GET" | "DELETE" | "PUT" | "PATCH" | "post" | "get" | "delete" | "put" | "patch";
