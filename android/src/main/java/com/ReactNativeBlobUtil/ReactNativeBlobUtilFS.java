@@ -349,14 +349,14 @@ class ReactNativeBlobUtilFS {
                     System.out.println("STORAGE Details " + externalDirectorysStr.toString());
                     promise.resolve(externalDirectorysStr.toString());
                 } else {
-                    promise.reject("RNFetchBlob.getAllSDCardApplicationDirs", "No externalDirectories found");
+                    promise.reject("ReactNativeBlobUtil.getAllSDCardApplicationDirs", "No externalDirectories found");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                promise.reject("RNFetchBlob.getAllSDCardApplicationDirs", e.getLocalizedMessage());
+                promise.reject("ReactNativeBlobUtil.getAllSDCardApplicationDirs", e.getLocalizedMessage());
             }
         } else {
-            promise.reject("RNFetchBlob.getAllSDCardApplicationDirs", "External storage not mounted");
+            promise.reject("ReactNativeBlobUtil.getAllSDCardApplicationDirs", "External storage not mounted");
         }
     }
     

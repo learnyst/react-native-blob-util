@@ -51,9 +51,9 @@ function getSDCardApplicationDir() {
 
 function getAllSDCardApplicationDirs() {
   if (Platform.OS === 'android')
-    return RNFetchBlob.getAllSDCardApplicationDirs()
+    return ReactNativeBlobUtil.getAllSDCardApplicationDirs()
   else
-    return Promise.reject('RNFetchBlob.android.getAllSDCardApplicationDirs only supports Android.')
+    return Promise.reject('ReactNativeBlobUtil.android.getAllSDCardApplicationDirs only supports Android.')
 }
 
 
