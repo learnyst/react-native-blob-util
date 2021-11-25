@@ -8,8 +8,7 @@ export type ReactNativeBlobUtil = ReactNativeBlobUtilStatic;
 export default ReactNativeBlobUtil;
 
 interface ReactNativeBlobUtilStatic {
-    fetch(method: Methods, url: string, headers?: { [key: string]: string }, body?: any
-        | null): StatefulPromise<FetchBlobResponse>;
+    fetch(method: Methods, url: string, headers?: { [key: string]: string }, body?: any | null): StatefulPromise<FetchBlobResponse>;
     base64: { encode(input: string): string; decode(input: string): string };
     android: AndroidApi;
     ios: IOSApi;
@@ -136,8 +135,7 @@ export declare namespace PolyfillFileReader {
     const DONE: number;
 }
 
-export declare class PolyfillEvent {
-}
+export declare class PolyfillEvent {}
 
 export interface PolyfillProgressEvent extends EventTarget {
     lengthComputable: boolean;
@@ -203,8 +201,7 @@ export declare namespace PolyfillBlob {
     function setLog(level: number): void;
 }
 
-export declare class PolyfillFile extends PolyfillBlob {
-}
+export declare class PolyfillFile extends PolyfillBlob {}
 
 export interface PolyfillXMLHttpRequest extends PolyfillXMLHttpRequestEventTarget {
     upload: PolyfillXMLHttpRequestEventTarget;
@@ -392,7 +389,7 @@ export interface FS {
 
     slice(src: string, dest: string, start: number, end: number): Promise<void>;
     asset(path: string): string;
-    df(): Promise<{ free: number, total: number }>;
+    df(): Promise<{ free: number; total: number }>;
 }
 
 export interface Dirs {
@@ -478,27 +475,27 @@ export interface AndroidDownloadOption {
     /**
      * Title string to be displayed when the file added to Downloads app.
      */
-    title: string
+    title: string;
 
     /**
      * File description to be displayed when the file added to Downloads app.
      */
-    description: string
+    description: string;
 
     /**
      * MIME string of the file.
      */
-    mime: string
+    mime: string;
 
     /**
      * URI string of the file.
      */
-    path: string
+    path: string;
 
     /**
      * Boolean value that determines if notification will be displayed.
      */
-    showNotification: boolean
+    showNotification: boolean;
 }
 
 export interface AndroidApi {
@@ -509,10 +506,10 @@ export interface AndroidApi {
      * @param mime Basically system will open an app according to this MIME type.
      * @param chooserTitle title for chooser, if not set the chooser won't be displayed (see [Android docs](https://developer.android.com/reference/android/content/Intent.html#createChooser(android.content.Intent,%20java.lang.CharSequence)))
      */
-    actionViewIntent(path: string, mime: string, chooserTitle?: string): Promise<any>;
+    actionViewIntent(path: string, mime: string, chooserTitle?: string): Promise<boolean | null>;
 
     /**
-     * 
+     *
      * This method brings up OS default file picker and resolves a file URI when the user selected a file.
      * However, it does not resolve or reject when user dismiss the file picker via pressing hardware back button,
      * but you can still handle this behavior via AppState.
@@ -531,7 +528,6 @@ export interface AndroidApi {
     getSDCardApplicationDir(): Promise<string>;
 
     getAllSDCardApplicationDirs(): Promise<string>;
-
 }
 
 type Methods = "POST" | "GET" | "DELETE" | "PUT" | "PATCH" | "post" | "get" | "delete" | "put" | "patch";
@@ -554,7 +550,7 @@ export interface StatefulPromise<T> extends Promise<T> {
     /**
      * Add an event listener with custom configuration
      */
-    progress(config: { count?: number, interval?: number }, callback: (received: number, total: number) => void): StatefulPromise<FetchBlobResponse>;
+    progress(config: { count?: number; interval?: number }, callback: (received: number, total: number) => void): StatefulPromise<FetchBlobResponse>;
 
     /**
      * Add an event listener with custom configuration.
@@ -564,7 +560,7 @@ export interface StatefulPromise<T> extends Promise<T> {
     /**
      * Add an event listener with custom configuration
      */
-    uploadProgress(config: { count?: number, interval?: number }, callback: (sent: number, total: number) => void): StatefulPromise<FetchBlobResponse>;
+    uploadProgress(config: { count?: number; interval?: number }, callback: (sent: number, total: number) => void): StatefulPromise<FetchBlobResponse>;
 
     /**
      * An IOS only API, when IOS app turns into background network tasks will be terminated after ~180 seconds,
@@ -598,10 +594,8 @@ export declare class ReactNativeBlobUtilSession {
  * A set of configurations that will be injected into a fetch method, with the following properties.
  */
 export interface ReactNativeBlobUtilConfig {
-
-    Progress?: { count?: number, interval?: number };
-    UploadProgress?: { count?: number, interval?: number };
-
+    Progress?: { count?: number; interval?: number };
+    UploadProgress?: { count?: number; interval?: number };
 
     /**
      * When this property is true, the downloaded data will overwrite the existing file. (true by default)
@@ -710,8 +704,7 @@ export interface ReactNativeBlobUtilStream {
     onEnd(): void;
 }
 
-export declare class ReactNativeBlobUtilFile {
-}
+export declare class ReactNativeBlobUtilFile {}
 
 export declare class ReactNativeBlobUtilStat {
     lastModified: number;

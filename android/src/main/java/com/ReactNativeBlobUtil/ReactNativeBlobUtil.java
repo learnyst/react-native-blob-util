@@ -118,37 +118,29 @@ public class ReactNativeBlobUtil extends ReactContextBaseJavaModule {
                     this.getReactApplicationContext().getPackageName() + ".provider", new File(path));
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            if (Build.VERSION.SDK_INT >= 24) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 // Create the intent with data and type
                 intent.setDataAndType(uriForFile, mime);
-                if (chooserTitle != null) {
-                    intent = Intent.createChooser(intent, chooserTitle);
-                }
 
                 // Set flag to give temporary permission to external app to use FileProvider
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 // All the activity to be opened outside of an activity
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                // Validate that the device can open the file
-                PackageManager pm = getCurrentActivity().getPackageManager();
-                if (intent.resolveActivity(pm) != null) {
-                    this.getReactApplicationContext().startActivity(intent);
-                }
-
             } else {
                 intent.setDataAndType(Uri.parse("file://" + path), mime).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (chooserTitle != null) {
-                    intent = Intent.createChooser(intent, chooserTitle);
-                }
-
-                try {
-                    this.getReactApplicationContext().startActivity(intent);
-                    promise.resolve(true);
-                } catch (ActivityNotFoundException ex) {
-                    promise.reject("ENOAPP", "No app installed for " + mime);
-                }
             }
+
+            if (chooserTitle != null) {
+                intent = Intent.createChooser(intent, chooserTitle);
+            }
+
+            try {
+                this.getReactApplicationContext().startActivity(intent);
+                promise.resolve(true);
+            } catch (ActivityNotFoundException ex) {
+                promise.reject("ENOAPP", "No app installed for " + mime);
+            }
+
             ActionViewVisible = true;
 
             final LifecycleEventListener listener = new LifecycleEventListener() {
