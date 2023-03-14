@@ -626,7 +626,9 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                 }
 
                 if (ReactNativeBlobUtilFileResp != null && !ReactNativeBlobUtilFileResp.isDownloadComplete()) {
-                    callback.invoke("Download interrupted.", null);
+                    System.out.println("Failed:: isDownloadCompleteReason = " + ReactNativeBlobUtilFileResp.isDownloadCompleteReason());
+
+                    callback.invoke("Download interrupted: Reason " + ReactNativeBlobUtilFileResp.isDownloadCompleteReason(), null);
                 } else {
                     this.destPath = this.destPath.replace("?append=true", "");
                     callback.invoke(null, ReactNativeBlobUtilConst.RNFB_RESPONSE_PATH, this.destPath);

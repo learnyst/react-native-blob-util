@@ -75,6 +75,10 @@ public class ReactNativeBlobUtilFileResp extends ResponseBody {
                 || (contentLength() == -1 && isEndMarkerReceived); // Case of chunked downloads
     }
 
+    public String isDownloadCompleteReason() {
+        return "db: " + bytesDownloaded + ":: cn:" + contentLength() + " :: endmark: " + isEndMarkerReceived;
+    }   
+
     @Override
     public BufferedSource source() {
         ProgressReportingSource countable = new ProgressReportingSource();
