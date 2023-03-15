@@ -166,6 +166,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
         if (options.addAndroidDownloads != null && options.addAndroidDownloads.hasKey("useDownloadManager")) {
 
             if (options.addAndroidDownloads.getBoolean("useDownloadManager")) {
+                System.out.println("rnblobutil:: using DownloadManager");
                 Uri uri = Uri.parse(url);
                 DownloadManager.Request req = new DownloadManager.Request(uri);
                 if (options.addAndroidDownloads.hasKey("notification") && options.addAndroidDownloads.getBoolean("notification")) {
@@ -244,6 +245,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
         try {
             // use trusty SSL socket
             if (this.options.trusty) {
+                System.out.println("rnblobutil:: this.options.trusty is true");
                 clientBuilder = ReactNativeBlobUtilUtils.getUnsafeOkHttpClient(client);
             } else {
                 clientBuilder = client.newBuilder();
@@ -252,7 +254,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
             // wifi only, need ACCESS_NETWORK_STATE permission
             // and API level >= 21
             if (this.options.wifiOnly) {
-
+                System.out.println("rnblobutil:: this.options.wifiOnly is true");
                 boolean found = false;
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -291,6 +293,8 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                 }
             }
 
+            System.out.println("rnblobutil:: downloading url " + url);
+
             final Request.Builder builder = new Request.Builder();
             try {
                 builder.url(new URL(url));
@@ -306,17 +310,23 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     String key = it.nextKey();
                     String value = headers.getString(key);
                     if (key.equalsIgnoreCase("RNFB-Response")) {
-                        if (value.equalsIgnoreCase("base64"))
+                        if (value.equalsIgnoreCase("base64")) {
+                            System.out.println("rnblobutil:: ResponseFormat.BASE64");
                             responseFormat = ResponseFormat.BASE64;
-                        else if (value.equalsIgnoreCase("utf8"))
+                        }
+                        else if (value.equalsIgnoreCase("utf8")) {
+                            System.out.println("rnblobutil:: ResponseFormat.UTF8");
                             responseFormat = ResponseFormat.UTF8;
+                        }
                     } else {
+                        System.out.println("rnblobutil:: adding header " + key.toLowerCase() + ":" + value);
                         builder.header(key.toLowerCase(), value);
                         mheaders.put(key.toLowerCase(), value);
                     }
                 }
             }
 
+            System.out.println("rnblobutil:: method = " + method);
             if (method.equalsIgnoreCase("post") || method.equalsIgnoreCase("put") || method.equalsIgnoreCase("patch")) {
                 String cType = getHeaderIgnoreCases(mheaders, "Content-Type").toLowerCase();
 
@@ -404,12 +414,14 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
             clientBuilder.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(@NonNull Chain chain) throws IOException {
+                    System.out.println("rnblobutil:: intercept called");
                     Response originalResponse = null;
                     try {
                         originalResponse = chain.proceed(req);
                         ResponseBody extended;
                         switch (responseType) {
                             case KeepInMemory:
+                                System.out.println("rnblobutil:: intercept called, KeepInMemory");
                                 extended = new ReactNativeBlobUtilDefaultResp(
                                         ReactNativeBlobUtil.RCTContext,
                                         taskId,
@@ -417,6 +429,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                                         options.increment);
                                 break;
                             case FileStorage:
+                                System.out.println("rnblobutil:: intercept called, FileStorage");
                                 extended = new ReactNativeBlobUtilFileResp(
                                         ReactNativeBlobUtil.RCTContext,
                                         taskId,
@@ -425,6 +438,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                                         options.overwrite);
                                 break;
                             default:
+                                System.out.println("rnblobutil:: intercept called, default");
                                 extended = new ReactNativeBlobUtilDefaultResp(
                                         ReactNativeBlobUtil.RCTContext,
                                         taskId,
@@ -434,17 +448,23 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                         }
                         return originalResponse.newBuilder().body(extended).build();
                     } catch (SocketException e) {
+                        System.out.println("rnblobutil:: SocketException");
+                        e.printStackTrace();
                         timeout = true;
                         if (originalResponse != null) {
                             originalResponse.close();
                         }
                     } catch (SocketTimeoutException e) {
+                        System.out.println("rnblobutil:: SocketTimeoutException");
+                        e.printStackTrace();
                         timeout = true;
                         if (originalResponse != null) {
                             originalResponse.close();
                         }
                         //ReactNativeBlobUtilUtils.emitWarningEvent("ReactNativeBlobUtil error when sending request : " + e.getLocalizedMessage());
                     } catch (Exception ex) {
+                        System.out.println("rnblobutil:: Exception");
+                        ex.printStackTrace();
                         if (originalResponse != null) {
                             originalResponse.close();
                         }
@@ -454,7 +474,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                 }
             });
 
-
+            System.out.println("rnblobutil:: options.timeout = " + options.timeout);
             if (options.timeout >= 0) {
                 clientBuilder.connectTimeout(options.timeout, TimeUnit.MILLISECONDS);
                 clientBuilder.readTimeout(options.timeout, TimeUnit.MILLISECONDS);
@@ -474,6 +494,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
 
                 @Override
                 public void onFailure(@NonNull Call call, IOException e) {
+                    System.out.println("rnblobutil:: onFailure");
                     cancelTask(taskId);
                     if (respInfo == null) {
                         respInfo = Arguments.createMap();
@@ -518,6 +539,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
 
 
         } catch (Exception error) {
+            System.out.println("rnblobutil:: Exception");
             error.printStackTrace();
             releaseTaskResource();
             callback.invoke("ReactNativeBlobUtil request error: " + error.getMessage() + error.getCause());
@@ -548,8 +570,12 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
     private void done(Response resp) {
         boolean isBlobResp = isBlobResponse(resp);
         emitStateEvent(getResponseInfo(resp, isBlobResp));
+
+        System.out.println("rnblobutil:: done, isBlobResp = " + isBlobResp);
+
         switch (responseType) {
             case KeepInMemory:
+                System.out.println("rnblobutil:: done, KeepInMemory");
                 try {
                     // For XMLHttpRequest, automatic response data storing strategy, when response
                     // data is considered as binary data, write it to file system
@@ -599,6 +625,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                 }
                 break;
             case FileStorage:
+                System.out.println("rnblobutil:: done, FileStorage");
                 ResponseBody responseBody = resp.body();
 
                 try {
@@ -607,7 +634,8 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     // and write response data to destination path.
                     responseBody.bytes();
                 } catch (Exception ignored) {
-//                    ignored.printStackTrace();
+                    ignored.printStackTrace();
+                    System.out.println("rnblobutil:: done, Ignored exception");
                 }
 
                 ReactNativeBlobUtilFileResp ReactNativeBlobUtilFileResp;
@@ -858,6 +886,4 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
 
         return client;
     }
-
-
 }
