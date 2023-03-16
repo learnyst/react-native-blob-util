@@ -349,12 +349,9 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
 
             boolean isChunkedRequest = getHeaderIgnoreCases(mheaders, "Transfer-Encoding").equalsIgnoreCase("chunked");
 
-            System.out.println("rnblobutil:: isChunkedRequest = " + isChunkedRequest);
-
             // set request body
             switch (requestType) {
                 case SingleFile:
-                    System.out.println("rnblobutil:: SingleFile");
                     requestBody = new ReactNativeBlobUtilBody(taskId)
                             .chunkedEncoding(isChunkedRequest)
                             .setRequestType(requestType)
@@ -363,7 +360,6 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     builder.method(method, requestBody);
                     break;
                 case AsIs:
-                    System.out.println("rnblobutil:: AsIs");
                     requestBody = new ReactNativeBlobUtilBody(taskId)
                             .chunkedEncoding(isChunkedRequest)
                             .setRequestType(requestType)
@@ -372,7 +368,6 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     builder.method(method, requestBody);
                     break;
                 case Form:
-                    System.out.println("rnblobutil:: Form");
                     String boundary = "ReactNativeBlobUtil-" + taskId;
                     requestBody = new ReactNativeBlobUtilBody(taskId)
                             .chunkedEncoding(isChunkedRequest)
@@ -383,7 +378,6 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     break;
 
                 case WithoutBody:
-                    System.out.println("rnblobutil:: WithoutBody");
                     if (method.equalsIgnoreCase("post") || method.equalsIgnoreCase("put") || method.equalsIgnoreCase("patch")) {
                         builder.method(method, RequestBody.create(null, new byte[0]));
                     } else
@@ -491,9 +485,6 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     ReadableMap notifyConfig = options.addAndroidDownloads;
-
-                    System.out.println("rnblobutil:: onResponse");
-
                     // Download manager settings
                     if (notifyConfig != null) {
                         String title = "", desc = "", mime = "text/plain";
@@ -634,12 +625,8 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     return;
                 }
 
-                if (ReactNativeBlobUtilFileResp != null) {
-                    System.out.println("rnblobutil:: isDownloadCompleteReason = " + ReactNativeBlobUtilFileResp.isDownloadCompleteReason());
-                }
-
                 if (ReactNativeBlobUtilFileResp != null && !ReactNativeBlobUtilFileResp.isDownloadComplete()) {
-                    System.out.println("rnblobutil:: Failed:: isDownloadCompleteReason = " + ReactNativeBlobUtilFileResp.isDownloadCompleteReason());
+                    System.out.println("Failed:: isDownloadCompleteReason = " + ReactNativeBlobUtilFileResp.isDownloadCompleteReason());
 
                     callback.invoke("Download interrupted: Reason " + ReactNativeBlobUtilFileResp.isDownloadCompleteReason(), null);
                 } else {
