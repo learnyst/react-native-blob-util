@@ -209,7 +209,12 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                 DownloadManager dm = (DownloadManager) appCtx.getSystemService(Context.DOWNLOAD_SERVICE);
                 downloadManagerId = dm.enqueue(req);
                 androidDownloadManagerTaskTable.put(taskId, Long.valueOf(downloadManagerId));
-                appCtx.registerReceiver(this, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                    if (Build.VERSION.SDK_INT >= 34 && appCtx.getApplicationInfo().targetSdkVersion >= 34) {
+                          appCtx.registerReceiver(this, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), /* RECEIVER_EXPORTED*/  2);
+                          } else {
+                    appCtx.registerReceiver(this, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                      }
+                
                 return;
             }
 
